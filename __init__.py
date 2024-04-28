@@ -13,7 +13,7 @@ def def_vt_fn(bv, start, length):
     new_param_type = bv.parse_type_string(user_input)[0]
     with bv.undoable_transaction():
         for i in range(start, start + length, 8):
-            fn = bv.get_data_var_at(i).value
+            fn = bv.read_pointer(i)
             func = bv.get_function_at(fn)
             new_param = FunctionParameter(new_param_type, "self")
             new_params = []
