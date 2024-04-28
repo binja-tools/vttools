@@ -18,6 +18,9 @@ def def_vt_fn(bv, start, length):
             new_param = FunctionParameter(new_param_type, "self")
             new_params = []
             new_params.append(new_param)
+            if func.type is None:
+                print(hex(i), "is not a function")
+                raise
             for param in func.type.parameters[1:]:
                 new_params.append(param)
             type_ = func.type
