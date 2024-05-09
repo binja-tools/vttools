@@ -8,9 +8,12 @@ def def_vt_fn(bv, start, length):
         return
     user_input = user_input.decode()
     user_input = user_input.strip()
-    if user_input[-1] != '*':
-        user_input += '*'
     new_param_type = bv.parse_type_string(user_input)[0]
+    first_reg = bv.platform.calling_conventions[0].int_arg_regs[0]
+    param1 = bv.arch.regs[first_reg]
+    if new_param_type.width > param1.size:
+        print("type does not fit into register")
+        raise
     with bv.undoable_transaction():
         for i in range(start, start + length, 8):
             fn = bv.read_pointer(i)
@@ -39,7 +42,7 @@ def def_vt_fn(bv, start, length):
             func.reanalyze()
 
 PluginCommand.register_for_range(
-    "VtTools\Define Vt Fn",
+    "VtTools\\Define Vt Fn",
     "Sets the first argument of all functions in range to given type",
     def_vt_fn
 )
