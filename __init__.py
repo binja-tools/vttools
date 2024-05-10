@@ -14,11 +14,6 @@ def def_vt_fn(bv, start, length):
     except:
         print(f"type {user_input} not found", file=sys.stderr)
         return
-    first_reg = bv.platform.calling_conventions[0].int_arg_regs[0]
-    param1 = bv.arch.regs[first_reg]
-    if new_param_type.width > param1.size:
-        print(f"type {user_input} does not fit into register {first_reg}", file=sys.stderr)
-        return
     try:
         with bv.undoable_transaction():
             for i in range(start, start + length, 8):
@@ -29,6 +24,11 @@ def def_vt_fn(bv, start, length):
                 new_params.append(new_param)
                 if func is None or func.type is None:
                     print(hex(i), "is not a function ptr", file=sys.stderr)
+                    raise
+                first_reg = func.calling_convention.int_arg_regs[0]
+                param1 = bv.arch.regs[first_reg]
+                if new_param_type.width > param1.size:
+                    print(f"type {user_input} does not fit into register {first_reg}", file=sys.stderr)
                     raise
                 for param in func.type.parameters[1:]:
                     new_params.append(param)
